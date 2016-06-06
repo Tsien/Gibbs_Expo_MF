@@ -151,13 +151,15 @@ class ExpoMF(BaseEstimator, TransformerMixin):
 
     def _set_params(self, X, para_dir):
         params = np.load(para_dir)
+        self.phi, self.alpha = params['nu'].T, params['alpha']
+        self.mu = get_mu(self.phi.T, X, self.alpha)
         if self.random_mu:
-            self.al = 2 * get_mu(self.phi.T, X, self.alpha) # parameter alpha for the beta distribution
-        else:
-            self.mu = get_mu(self.phi.T, X, self.alpha)
+            self.al = 2 * self.mu # parameter alpha for the beta distribution
         if not self.init_only_mu:
-            self.theta, self.beta, self.phi, self.alpha = params['U'].T, params['V'].T, params['nu'].T, params['alpha']
+            self.theta, self.beta = params['U'].T, params['V'].T
             self.A = np.random.binomial(1, self.mu, self.mu.shape)
+
+
 
     def fit(self, Y, X, para_dir = None, init_only_mu=False, random_mu = False):
         '''Fit the model to the data in X.
