@@ -36,7 +36,7 @@ class ExpoMF(BaseEstimator, TransformerMixin):
     def __init__(self, min_chunk_count = 20, n_components=100, max_iter=10, batch_size=1000,
                  batch_sgd=10, max_epoch=10, init_std=0.01, n_jobs=8,
                  random_state=None, save_params=False, save_dir='.',
-                 early_stopping=False, verbose=False, **kwargs):
+                 early_stopping=False, verbose=False, debugCov = False, **kwargs):
         '''
         Exposure matrix factorization
         Parameters
@@ -85,6 +85,7 @@ class ExpoMF(BaseEstimator, TransformerMixin):
         self.early_stopping = early_stopping
         self.verbose = verbose
         self.mse = ones((max_iter, 2))
+        self.debugCov = debugCov
 
         if type(self.random_state) is int:
             np.random.seed(self.random_state)
@@ -321,6 +322,11 @@ def getGibbs(ev,U,I,Y):
     chunkSize = U / max(ev.n_jobs, ev.min_chunk_count)
 
     thetas = Parallel(ev.n_jobs)(delayed(sampleUser)(ev,Y,i[0],i[1],k,lB) for i in chunkIndex(U, chunkSize))
+    
+    if ev.debugCov == True:
+        A_star = sparse.csr_matrix(np.diag(ev.A[0, :]))  
+        cov = np.linalg.pinv(lB.dot(A_star.dot(ev.beta.T)) + k)
+        print cov[:,0]
     
     ci = 0
     for i in chunkIndex(U, chunkSize):

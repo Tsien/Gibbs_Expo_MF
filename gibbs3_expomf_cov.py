@@ -40,7 +40,7 @@ class ExpoMF(BaseEstimator, TransformerMixin):
     def __init__(self, n_components=100, max_iter=10, batch_size=1000,
                  batch_sgd=10, max_epoch=10, init_std=0.01, n_jobs=8,
                  random_state=None, save_params=False, save_dir='.',
-                 early_stopping=False, verbose=False, **kwargs):
+                 early_stopping=False, verbose=False, debugCov = False, **kwargs):
         '''
         Exposure matrix factorization
 
@@ -87,6 +87,7 @@ class ExpoMF(BaseEstimator, TransformerMixin):
         self.early_stopping = early_stopping
         self.verbose = verbose
         self.mse = ones((max_iter, 2))
+        self.debugCov = debugCov
 
         if type(self.random_state) is int:
             np.random.seed(self.random_state)
@@ -265,7 +266,10 @@ class ExpoMF(BaseEstimator, TransformerMixin):
             print('\r\tSampling user factors: time=%.2f'
                   % (time.time() - start_t))
             start_t = _writeline_and_time('\tSampling item factors...')
-
+        if self.debugCov == True:
+            A_star = sparse.csr_matrix(np.diag(self.A[0, :]))
+            cov = matrix(self.lam_y * self.beta.dot(A_star.dot(self.beta.T)) + self.lam_theta * np.eye(self.n_components)).I
+            print cov[0,:]
         #==========================================================================
         #sample item factors
 
