@@ -21,7 +21,7 @@ from numpy import linalg as LA
 from numpy import ones, matrix, zeros
 from scipy import sparse
 from sklearn.metrics import mean_squared_error
-
+import matplotlib.plot as plt
 from joblib import Parallel, delayed
 from math import sqrt
 from sklearn.base import BaseEstimator, TransformerMixin
