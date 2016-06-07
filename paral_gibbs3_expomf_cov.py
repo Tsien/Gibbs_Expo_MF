@@ -294,7 +294,7 @@ def sampleUser(ev,Y,a,b,k,lB):
     theta = np.zeros((ev.theta.shape[0],b-a))
     for u in r: # sample for each item
         A_star = sparse.csr_matrix(np.diag(ev.A[u, :]))  
-        cov = numpy.linalg.pinv(lB.dot(A_star.dot(ev.beta.T)) + k)
+        cov = np.linalg.pinv(lB.dot(A_star.dot(ev.beta.T)) + k)
         mean = ev.lam_y * cov.dot(ev.beta.dot(A_star.dot(Y[u, :].T.toarray())))
         theta[:, u-a] = np.random.multivariate_normal(np.squeeze(np.asarray(mean)), cov)
     return theta
@@ -304,7 +304,7 @@ def sampleItem(ev,Y,a,b,k,lB):
     beta = np.zeros((ev.beta.shape[0],b-a))
     for i in r: # sample for each item
         A_star = sparse.csr_matrix(np.diag(ev.A[:, i])) 
-        cov = numpy.linalg.pinv(lB.dot(A_star.dot(ev.theta.T)) + k)
+        cov = np.linalg.pinv(lB.dot(A_star.dot(ev.theta.T)) + k)
         mean = ev.lam_y * cov.dot(ev.theta.dot(A_star.dot(Y[:, i].toarray())))
         beta[:, i-a] = np.random.multivariate_normal(np.squeeze(np.asarray(mean)), cov)
     return beta
