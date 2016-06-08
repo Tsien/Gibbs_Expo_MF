@@ -21,7 +21,7 @@ from numpy import linalg as LA
 from numpy import ones, matrix, zeros
 from scipy import sparse
 from sklearn.metrics import mean_squared_error
-import matplotlib.plot as plt
+import matplotlib.pyplot as plt
 from joblib import Parallel, delayed
 from math import sqrt
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -219,7 +219,7 @@ class ExpoMF(BaseEstimator, TransformerMixin):
             self.mse[i, 0], self.mse[i, 1] = self._MSE(X.toarray(), p1, p2)
             if self.verbose:
                 print('The MSE are:%0.2f and %0.2f' % (self.mse[i, 0], self.mse[i, 1]))
-            self._save_params(self.max_iter)
+            self._save_params(i)
 
         num = self.max_iter+1
         self.theta = U / num
